@@ -207,26 +207,32 @@
     </div>
 
     <script>
-        const MAX_TEXTAREA_FONT_SIZE = 24;
-        const MIN_TEXTAREA_FONT_SIZE = 9;
-        const TEXTAREA_FONT_STEP = 0.25;
+        const MAX_TEXTAREA_FONT_SIZE = 20;
+        const MIN_TEXTAREA_FONT_SIZE = 11;
+        const TEXTAREA_FONT_STEP = 0.5;
 
         function fitTextareaText(textarea) {
             if (!textarea) {
                 return;
             }
 
-            let fontSize = MIN_TEXTAREA_FONT_SIZE;
+            let fontSize = MAX_TEXTAREA_FONT_SIZE;
             textarea.style.fontSize = fontSize + 'px';
-
-            while (textarea.scrollHeight <= textarea.clientHeight - 1 && fontSize < MAX_TEXTAREA_FONT_SIZE) {
-                fontSize = Math.min(MAX_TEXTAREA_FONT_SIZE, fontSize + TEXTAREA_FONT_STEP);
-                textarea.style.fontSize = fontSize + 'px';
-            }
 
             while (textarea.scrollHeight > textarea.clientHeight + 1 && fontSize > MIN_TEXTAREA_FONT_SIZE) {
                 fontSize = Math.max(MIN_TEXTAREA_FONT_SIZE, fontSize - TEXTAREA_FONT_STEP);
                 textarea.style.fontSize = fontSize + 'px';
+            }
+
+            // Grow short text to use the box better without forcing tiny/huge jumps.
+            while (textarea.scrollHeight < textarea.clientHeight * 0.8 && fontSize < MAX_TEXTAREA_FONT_SIZE) {
+                const nextSize = Math.min(MAX_TEXTAREA_FONT_SIZE, fontSize + TEXTAREA_FONT_STEP);
+                textarea.style.fontSize = nextSize + 'px';
+                if (textarea.scrollHeight > textarea.clientHeight + 1) {
+                    textarea.style.fontSize = fontSize + 'px';
+                    break;
+                }
+                fontSize = nextSize;
             }
         }
 
