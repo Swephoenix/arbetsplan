@@ -207,7 +207,7 @@
     </div>
 
     <script>
-        const MAX_TEXTAREA_FONT_SIZE = 16;
+        const MAX_TEXTAREA_FONT_SIZE = 24;
         const MIN_TEXTAREA_FONT_SIZE = 9;
         const TEXTAREA_FONT_STEP = 0.25;
 
@@ -216,8 +216,13 @@
                 return;
             }
 
-            let fontSize = MAX_TEXTAREA_FONT_SIZE;
+            let fontSize = MIN_TEXTAREA_FONT_SIZE;
             textarea.style.fontSize = fontSize + 'px';
+
+            while (textarea.scrollHeight <= textarea.clientHeight - 1 && fontSize < MAX_TEXTAREA_FONT_SIZE) {
+                fontSize = Math.min(MAX_TEXTAREA_FONT_SIZE, fontSize + TEXTAREA_FONT_STEP);
+                textarea.style.fontSize = fontSize + 'px';
+            }
 
             while (textarea.scrollHeight > textarea.clientHeight + 1 && fontSize > MIN_TEXTAREA_FONT_SIZE) {
                 fontSize = Math.max(MIN_TEXTAREA_FONT_SIZE, fontSize - TEXTAREA_FONT_STEP);
