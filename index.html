@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arbetsplan - Medborgarskolan</title>
+    
+    <!-- Importera html2pdf.js för att kunna spara som PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #525659;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .page {
+            background-color: white;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm 20mm;
+            box-sizing: border-box;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+
+        .left-info {
+            font-size: 11px;
+            line-height: 1.3;
+        }
+
+        .logo-img {
+            width: 170px;
+            height: auto;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .right-info {
+            text-align: right;
+        }
+
+        .right-info h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .right-info p {
+            margin: 5px 0 0 0;
+            font-size: 10px;
+        }
+
+        .main-title {
+            font-size: 22px;
+            font-weight: normal;
+            margin-bottom: 10px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #000;
+            margin-bottom: 25px;
+        }
+
+        .intro-text {
+            font-size: 12px;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        .intro-text p {
+            margin: 0 0 5px 0;
+        }
+
+        .form-group {
+            background-color: #fafafa;
+            margin-bottom: 15px;
+            padding: 2px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            padding: 8px 5px 5px 5px;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #777;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            resize: vertical;
+            min-height: 70px;
+            background-color: white;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1a2a6c;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        .btn-download {
+            background-color: #1a2a6c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: background 0.3s;
+        }
+
+        .btn-download:hover {
+            background-color: #101a45;
+        }
+
+        .html2pdf__page-break { page-break-before: always; }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="btn-download" onclick="generatePDF()">💾 Spara som PDF</button>
+    </div>
+
+    <div class="page" id="document-content">
+        
+        <div class="header-container">
+            <div class="left-info">
+                <!-- Uppdaterad bildlänk som använder en öppen proxy för att kringgå säkerhetsspärren (CORS) -->
+                <img 
+                    src="logo-medborgarskolan.c3013527.svg" 
+                    crossorigin="anonymous" 
+                    class="logo-img" 
+                    alt="Medborgarskolan">
+                
+                Medborgarskolan Syd<br>
+                Västergatan 17<br>
+                24131 ESLÖV<br>
+                region.syd@medborgarskolan.se<br>
+                www.medborgarskolan.se
+            </div>
+            <div class="right-info">
+                <h1>Arbetsplan</h1>
+                <p>Utskriftsdatum 2026-02-24</p>
+            </div>
+        </div>
+
+        <h2 class="main-title">77263 - Designa bilder och grafik med hjälp av AI</h2>
+        <hr>
+
+        <div class="intro-text">
+            <p>Planering av gruppens studier.</p>
+            <p>Så kallad annan folkbildning är en del av Medborgarskolans folkbildningsverksamhet som kan genomföras i friare och flexiblare former. Det finns här möjlighet att pröva nya idéer och utveckla nyskapande folkbildningsverksamhet. Annan folkbildningsverksamhet kan till exempel vara en workshop, prova-på-dagar, barnverksamhet (barn från sex år) eller helgkurser där sammankomsterna kan vara längre och genomföras tätare än i studiecirklar.</p>
+            <p>Verksamheten ska vara styrd av deltagarnas önskemål om innehåll och upplägg.</p>
+            <p>Som stöd för er grupps utveckling och lärande ska det finnas en dokumenterad plan för verksamhetens genomförande och för det studiematerial som ska användas (Förordning (2015:218) om statsbidrag för folkbildningen, 12§).</p>
+            <p>Ledaren arbetar fram arbetsplanen tillsammans med deltagarna och Medborgarskolan ansvarar därefter för att godkänna arbetsplanen.</p>
+            <p>Fyll i arbetsplanen nedan efter verksamhetens första sammankomst.</p>
+        </div>
+
+        <div class="form-group">
+            <label>1. Beskriv era mål med verksamheten. (Vad vill ni lära er? Vad är syftet med verksamheten?) (obligatorisk uppgift)</label>
+            <textarea rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>2. Berätta hur ni ska göra för att nå era mål. (Hur ska ni göra för att lära er?) (obligatorisk uppgift)</label>
+            <textarea rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>3. Beskriv det studiematerial/de kunskapskällor ni ev kommer att använda. (Ange namn på litteratur, digitala medier, annat studiematerial och/eller beskrivning av ledarens och/eller deltagarnas kunskaper. Materialet ska vid behov vara kontrollerbart.) (obligatorisk uppgift)</label>
+            <textarea rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>4. Berätta vilka resurser och/eller vilket stöd ni har kommit överens med Medborgarskolan om att verksamheten behöver för att nå era mål. (Tex utbildning, lokal, pedagogiskt/administrativt stöd, kursmaterial, arbetsmaterial, marknadsföring). (obligatorisk uppgift)</label>
+            <textarea rows="3"></textarea>
+        </div>
+
+    </div>
+
+    <script>
+        function generatePDF() {
+            const element = document.getElementById('document-content');
+            
+            const opt = {
+                margin:       0,
+                filename:     'Arbetsplan_77263.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                // useCORS är nu inställt på true och fungerar tillsammans med proxyn
+                html2canvas:  { scale: 2, useCORS: true, allowTaint: true }, 
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            const btn = document.querySelector('.btn-download');
+            const originalText = btn.innerText;
+            btn.innerText = "Genererar PDF...";
+            btn.disabled = true;
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
