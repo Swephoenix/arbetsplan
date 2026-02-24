@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arbetsplan - Medborgarskolan</title>
     
-    <!-- Importera html2pdf.js för att kunna spara som PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
     <style>
         body {
             font-family: Arial, Helvetica, sans-serif;
@@ -22,11 +19,12 @@
         .page {
             background-color: white;
             width: 210mm;
-            min-height: 297mm;
+            height: 297mm;
             padding: 20mm 20mm;
             box-sizing: border-box;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             position: relative;
+            overflow: hidden;
         }
 
         .header-container {
@@ -142,6 +140,27 @@
         }
 
         .html2pdf__page-break { page-break-before: always; }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .controls {
+                display: none;
+            }
+
+            .page {
+                box-shadow: none;
+                margin: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -249,10 +268,10 @@
         }
 
         function generatePDF() {
-            const element = document.getElementById('document-content');
             const btn = document.querySelector('.btn-download');
+            const element = document.getElementById('document-content');
 
-            if (!element || !btn) {
+            if (!btn || !element) {
                 return;
             }
 
@@ -283,17 +302,9 @@
                 textarea.parentNode.insertBefore(staticBlock, textarea.nextSibling);
                 replacements.push({ textarea, staticBlock });
             });
-            
-            const opt = {
-                margin:       0,
-                filename:     'Arbetsplan_77263.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, allowTaint: true }, 
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
 
             const originalText = btn.innerText;
-            btn.innerText = "Genererar PDF...";
+            btn.innerText = "Öppnar utskrift...";
             btn.disabled = true;
 
             const restoreFormState = () => {
@@ -303,18 +314,25 @@
                     }
                     textarea.style.display = '';
                 });
+                btn.innerText = originalText;
+                btn.disabled = false;
             };
 
-            html2pdf().set(opt).from(element).save().then(() => {
+            const onAfterPrint = () => {
                 restoreFormState();
-                btn.innerText = originalText;
-                btn.disabled = false;
-            }).catch(() => {
-                restoreFormState();
-                btn.innerText = originalText;
-                btn.disabled = false;
-                alert("Kunde inte skapa PDF. Kontrollera internetanslutning och försök igen.");
-            });
+                window.removeEventListener('afterprint', onAfterPrint);
+            };
+
+            window.addEventListener('afterprint', onAfterPrint);
+            window.print();
+
+            // Fallback if afterprint is not fired by the browser.
+            setTimeout(() => {
+                if (btn.disabled) {
+                    restoreFormState();
+                    window.removeEventListener('afterprint', onAfterPrint);
+                }
+            }, 1500);
         }
 
         (function setPrintDate() {
