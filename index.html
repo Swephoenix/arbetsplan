@@ -104,7 +104,8 @@
             padding: 10px;
             font-family: Arial, sans-serif;
             font-size: 12px;
-            resize: vertical;
+            line-height: 1.35;
+            resize: none;
             min-height: 70px;
             background-color: white;
         }
@@ -206,6 +207,36 @@
     </div>
 
     <script>
+        const MAX_TEXTAREA_FONT_SIZE = 12;
+        const MIN_TEXTAREA_FONT_SIZE = 8;
+        const TEXTAREA_FONT_STEP = 0.5;
+
+        function fitTextareaText(textarea) {
+            if (!textarea) {
+                return;
+            }
+
+            let fontSize = MAX_TEXTAREA_FONT_SIZE;
+            textarea.style.fontSize = fontSize + 'px';
+
+            while (textarea.scrollHeight > textarea.clientHeight + 1 && fontSize > MIN_TEXTAREA_FONT_SIZE) {
+                fontSize = Math.max(MIN_TEXTAREA_FONT_SIZE, fontSize - TEXTAREA_FONT_STEP);
+                textarea.style.fontSize = fontSize + 'px';
+            }
+        }
+
+        function initResponsiveTextareaFonts() {
+            const textareas = document.querySelectorAll('.form-group textarea');
+            textareas.forEach((textarea) => {
+                fitTextareaText(textarea);
+                textarea.addEventListener('input', () => fitTextareaText(textarea));
+            });
+
+            window.addEventListener('resize', () => {
+                textareas.forEach((textarea) => fitTextareaText(textarea));
+            });
+        }
+
         function generatePDF() {
             const element = document.getElementById('document-content');
             const btn = document.querySelector('.btn-download');
@@ -218,6 +249,7 @@
             const textareas = element.querySelectorAll('textarea');
 
             textareas.forEach((textarea) => {
+                fitTextareaText(textarea);
                 const computed = window.getComputedStyle(textarea);
                 const staticBlock = document.createElement('div');
 
@@ -282,6 +314,8 @@
             const today = new Date().toISOString().slice(0, 10);
             dateElement.textContent = "Utskriftsdatum " + today;
         })();
+
+        initResponsiveTextareaFonts();
     </script>
 </body>
 </html>
