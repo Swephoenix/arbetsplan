@@ -68,9 +68,13 @@
         }
 
         hr {
-            border: none;
-            border-top: 1px solid #000;
+            border: 0;
+            height: 1px;
+            background: #000;
+            color: #000;
             margin-bottom: 25px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
         .intro-text {
@@ -168,6 +172,12 @@
             body {
                 background: white;
                 padding: 0;
+            }
+
+            hr {
+                background: #000 !important;
+                color: #000 !important;
+                height: 1px !important;
             }
 
             .controls {
