@@ -233,7 +233,8 @@
                 staticBlock.style.backgroundColor = computed.backgroundColor;
                 staticBlock.style.color = computed.color;
                 staticBlock.style.whiteSpace = 'pre-wrap';
-                staticBlock.style.wordBreak = 'break-word';
+                staticBlock.style.overflowWrap = 'anywhere';
+                staticBlock.style.wordBreak = 'break-all';
 
                 textarea.style.display = 'none';
                 textarea.parentNode.insertBefore(staticBlock, textarea.nextSibling);
