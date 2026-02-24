@@ -213,6 +213,32 @@
             if (!element || !btn) {
                 return;
             }
+
+            const replacements = [];
+            const textareas = element.querySelectorAll('textarea');
+
+            textareas.forEach((textarea) => {
+                const computed = window.getComputedStyle(textarea);
+                const staticBlock = document.createElement('div');
+
+                staticBlock.textContent = textarea.value || '';
+                staticBlock.style.width = '100%';
+                staticBlock.style.boxSizing = 'border-box';
+                staticBlock.style.border = computed.border;
+                staticBlock.style.padding = computed.padding;
+                staticBlock.style.fontFamily = computed.fontFamily;
+                staticBlock.style.fontSize = computed.fontSize;
+                staticBlock.style.lineHeight = computed.lineHeight;
+                staticBlock.style.minHeight = computed.minHeight;
+                staticBlock.style.backgroundColor = computed.backgroundColor;
+                staticBlock.style.color = computed.color;
+                staticBlock.style.whiteSpace = 'pre-wrap';
+                staticBlock.style.wordBreak = 'break-word';
+
+                textarea.style.display = 'none';
+                textarea.parentNode.insertBefore(staticBlock, textarea.nextSibling);
+                replacements.push({ textarea, staticBlock });
+            });
             
             const opt = {
                 margin:       0,
@@ -226,10 +252,21 @@
             btn.innerText = "Genererar PDF...";
             btn.disabled = true;
 
+            const restoreFormState = () => {
+                replacements.forEach(({ textarea, staticBlock }) => {
+                    if (staticBlock.parentNode) {
+                        staticBlock.parentNode.removeChild(staticBlock);
+                    }
+                    textarea.style.display = '';
+                });
+            };
+
             html2pdf().set(opt).from(element).save().then(() => {
+                restoreFormState();
                 btn.innerText = originalText;
                 btn.disabled = false;
             }).catch(() => {
+                restoreFormState();
                 btn.innerText = originalText;
                 btn.disabled = false;
                 alert("Kunde inte skapa PDF. Kontrollera internetanslutning och försök igen.");
