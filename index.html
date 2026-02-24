@@ -120,6 +120,24 @@
             z-index: 100;
             width: 210mm;
             max-width: 100%;
+            display: grid;
+            gap: 10px;
+        }
+
+        .course-controls {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 10px;
+        }
+
+        .course-controls input {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #777;
+            padding: 10px;
+            font-size: 14px;
+            font-family: Arial, Helvetica, sans-serif;
+            border-radius: 4px;
         }
 
         .btn-download {
@@ -166,6 +184,10 @@
 <body>
 
     <div class="controls">
+        <div class="course-controls">
+            <input id="course-code" type="text" inputmode="numeric" placeholder="Kurskod (siffror)" aria-label="Kurskod">
+            <input id="course-name" type="text" placeholder="Kursnamn" aria-label="Kursnamn">
+        </div>
         <button class="btn-download" onclick="generatePDF()">💾 Spara som PDF</button>
     </div>
 
@@ -176,6 +198,7 @@
                 <img 
                     src="logo-medborgarskolan.c3013527.svg" 
                     crossorigin="anonymous" 
+                    id="org-logo"
                     class="logo-img" 
                     alt="Medborgarskolan">
                 
@@ -191,7 +214,7 @@
             </div>
         </div>
 
-        <h2 class="main-title">77263 - Designa bilder och grafik</h2>
+        <h2 class="main-title" id="course-title"></h2>
         <hr>
 
         <div class="intro-text">
@@ -230,6 +253,22 @@
         const MIN_TEXTAREA_FONT_SIZE = 11;
         const TEXTAREA_FONT_STEP = 0.5;
 
+        function updateCourseTitle() {
+            const codeInput = document.getElementById('course-code');
+            const nameInput = document.getElementById('course-name');
+            const title = document.getElementById('course-title');
+            if (!codeInput || !nameInput || !title) {
+                return;
+            }
+
+            const code = (codeInput.value || '').replace(/\D/g, '');
+            if (codeInput.value !== code) {
+                codeInput.value = code;
+            }
+            const name = (nameInput.value || '').trim();
+            title.textContent = code && name ? (code + ' - ' + name) : '';
+        }
+
         function fitTextareaText(textarea) {
             if (!textarea) {
                 return;
@@ -267,11 +306,59 @@
             });
         }
 
-        function generatePDF() {
+        async function ensureLogoLoaded() {
+            const logo = document.getElementById('org-logo');
+            if (!logo) {
+                return;
+            }
+
+            if (logo.complete && logo.naturalWidth > 0) {
+                return;
+            }
+
+            await new Promise((resolve) => {
+                let done = false;
+                const finish = () => {
+                    if (done) {
+                        return;
+                    }
+                    done = true;
+                    logo.removeEventListener('load', finish);
+                    logo.removeEventListener('error', finish);
+                    resolve();
+                };
+
+                logo.addEventListener('load', finish, { once: true });
+                logo.addEventListener('error', finish, { once: true });
+                setTimeout(finish, 1500);
+            });
+        }
+
+        async function generatePDF() {
             const btn = document.querySelector('.btn-download');
             const element = document.getElementById('document-content');
+            const codeInput = document.getElementById('course-code');
+            const nameInput = document.getElementById('course-name');
 
-            if (!btn || !element) {
+            if (!btn || !element || !codeInput || !nameInput) {
+                return;
+            }
+
+            const courseCode = (codeInput.value || '').replace(/\D/g, '');
+            const courseName = (nameInput.value || '').trim();
+            codeInput.value = courseCode;
+            nameInput.value = courseName;
+            updateCourseTitle();
+
+            if (!courseCode) {
+                alert('Ange kurskod först (endast siffror).');
+                codeInput.focus();
+                return;
+            }
+
+            if (!courseName) {
+                alert('Ange kursnamn.');
+                nameInput.focus();
                 return;
             }
 
@@ -306,6 +393,7 @@
             const originalText = btn.innerText;
             btn.innerText = "Öppnar utskrift...";
             btn.disabled = true;
+            await ensureLogoLoaded();
 
             const restoreFormState = () => {
                 replacements.forEach(({ textarea, staticBlock }) => {
@@ -345,6 +433,16 @@
         })();
 
         initResponsiveTextareaFonts();
+        (function initCourseFields() {
+            const codeInput = document.getElementById('course-code');
+            const nameInput = document.getElementById('course-name');
+            if (!codeInput || !nameInput) {
+                return;
+            }
+            codeInput.addEventListener('input', updateCourseTitle);
+            nameInput.addEventListener('input', updateCourseTitle);
+            updateCourseTitle();
+        })();
     </script>
 </body>
 </html>
