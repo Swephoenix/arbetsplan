@@ -151,7 +151,6 @@
         
         <div class="header-container">
             <div class="left-info">
-                <!-- Uppdaterad bildlänk som använder en öppen proxy för att kringgå säkerhetsspärren (CORS) -->
                 <img 
                     src="logo-medborgarskolan.c3013527.svg" 
                     crossorigin="anonymous" 
@@ -166,7 +165,7 @@
             </div>
             <div class="right-info">
                 <h1>Arbetsplan</h1>
-                <p>Utskriftsdatum 2026-02-24</p>
+                <p id="print-date"></p>
             </div>
         </div>
 
@@ -207,17 +206,20 @@
     <script>
         function generatePDF() {
             const element = document.getElementById('document-content');
+            const btn = document.querySelector('.btn-download');
+
+            if (!element || !btn) {
+                return;
+            }
             
             const opt = {
                 margin:       0,
                 filename:     'Arbetsplan_77263.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
-                // useCORS är nu inställt på true och fungerar tillsammans med proxyn
                 html2canvas:  { scale: 2, useCORS: true, allowTaint: true }, 
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            const btn = document.querySelector('.btn-download');
             const originalText = btn.innerText;
             btn.innerText = "Genererar PDF...";
             btn.disabled = true;
@@ -225,8 +227,21 @@
             html2pdf().set(opt).from(element).save().then(() => {
                 btn.innerText = originalText;
                 btn.disabled = false;
+            }).catch(() => {
+                btn.innerText = originalText;
+                btn.disabled = false;
+                alert("Kunde inte skapa PDF. Kontrollera internetanslutning och försök igen.");
             });
         }
+
+        (function setPrintDate() {
+            const dateElement = document.getElementById('print-date');
+            if (!dateElement) {
+                return;
+            }
+            const today = new Date().toISOString().slice(0, 10);
+            dateElement.textContent = "Utskriftsdatum " + today;
+        })();
     </script>
 </body>
 </html>
